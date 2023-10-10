@@ -17,6 +17,8 @@ if response.status_code == 200:
 
     # Loop through each property listing and extract information
     for listing in property_listings:
+        
+        
         # Extract house price
         price = listing.find("div", class_="listing-price").text.strip()
 
@@ -25,7 +27,9 @@ if response.status_code == 200:
 
         # Extract square footage
         sqft = listing.find("div", class_="property-features").find("li", class_="property-feature-sqft").text.strip()
-
+        
+        
+        # TODO Change to CSV saving
         # Print the extracted information
         print("Price:", price)
         print("Bedrooms:", bedrooms)
