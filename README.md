@@ -1,17 +1,44 @@
-# Structure:
-Because we need a square footage it will be easier to look though each card and get the link to each listing, then get the information from the listing itself.
+# Project Title
 
+WebScraper for Realtor.ca
 
-# Functions:
-These are the steps / functions that will occur in the code.
-- PageIterator
-    This will search through each page of listing in the map
-- GetHRef
-    This will get the href link for each listing
-- ParseListing
-    This will parse the information within the linked 
+## Description
 
+This is a simple webscraper for Realtor.ca using Selenium. Realtor is dynamically loaded so each page must be loaded then scraped.
 
-# Requirements
-- Beautiful Soup 4
-- Requests
+## Getting Started
+
+### Dependencies
+
+* Python
+* Selenium
+Selenium can be installed by entering this command into the console. 
+```
+pip install selenium
+```
+
+### Installing
+
+* Clone the repo
+* In the Scraper.py file change the URL to be the Realtor url from which you want to scrape.
+    * This URL must be from the "map" view
+* Different data can be scarped by adding to the scrape_data function.  
+
+### Executing program
+
+* Run the Scraper.py file to begin scraping
+* As the program begins you might have to do a verification test
+* Regualry during the test you will have to redo the verification
+
+## Authors
+
+- Ethan Gelinas 
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details
+
+## Acknowledgments
+
+Code Basis / help
+* [ChatGPT](https://chat.openai.com/)
