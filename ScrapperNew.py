@@ -46,12 +46,20 @@ listing_Links = driver.find_elements(By.CLASS_NAME, "listingDetailsLink")
 
 for link in listing_Links:
     
+    def end():
+         # Close the new tab
+        driver.close()
+        # Switch back to the original tab (first tab)
+        driver.switch_to.window(driver.window_handles[0])
+    
     # Go to listing page and scrape the data needed
     action = webdriver.ActionChains(driver)
     action.context_click(link).key_down(Keys.CONTROL).click(link).key_up(Keys.CONTROL).perform()
     
     # Swtich the new listing page
     driver.switch_to.window(driver.window_handles[1])
+    
+    time.sleep(20)
     
     # Get the string of how much the listing is
     price_Str = driver.find_element(By.ID, "listingPriceValue").text.strip()
@@ -71,15 +79,61 @@ for link in listing_Links:
     footage_Str: str
     
     try:
-        driver
+        city_Str = driver.find_element(By.ID, "listingAddress").text.strip()
+        #bedroom_Str = driver.find_element(By.ID, "BedroomIcon").find_element(By.CLASS_NAME, "listingIconNum ")
+        bedroom_Str = driver.find_element(By.XPATH, '//*[@id="BedroomIcon"]/*[@class="listingIconNum]').text.strip()
+        #bathroom_Str = driver.find_element(By.ID, "BathroomIcon").find_element(By.CLASS_NAME, "listingIconNum").text.strip()
+        bathroom_Str = driver.find_element(By.XPATH, '//*[@id="BathroomIcon"]/*[@class="listingIconNum]').text.strip()
+        #footage_Str = driver.find_element(By.ID, "propertyDetailsSectionContentSubCon_SquareFootage").find_element(By.CLASS_NAME,"propertyDetailsSectionContentValue")
+        footage_Str = driver.find_element(By.XPATH, '//*[@id="propertyDetailsSectionContentSubCon_SquareFootage"]/*[@class="propertyDetailsSectionContentValue"]' ).text.strip()
+        
+        # Once the strings are made, format them into proper terms
+        
+        # Get the city of the listing 
+        city_index = city_Str.find('>')
+        city_Str = city_Str[city_index:]
+        city_index = city_Str.find(',')
+        city_Str = city_Str[:city_index]
+        
+        # Get the number of bedrooms
+        if bedroom_Str.isdigit():
+            bedroom_int = int(bedroom_Str)
+        else: 
+            print(bedroom_Str + " is not digits")
+            end()
+            continue
+            
+        # Get the number of bathrooms
+        if bathroom_Str.isdigit():
+            bathroom_int = int(bathroom_Str)
+        else: 
+            print(bathroom_Str + " is not digits")
+            end()
+            continue
+        
+        # Get the square footage of the listing
+        footage_index = footage_Str.find("sqft")
+        footage_Str = footage_Str[:footage_index]
+        footage_Str = footage_Str.strip()
+        
+        if footage_Str.isdigit():
+            footage_int = int(footage_Str)
+        else:
+            print(footage_Str + " is not digits")
+            end()
+            continue
+    
+    
+    
+    
+    # If the scraping fails go on to the next listing
     except:
         print("listing failed")
+        # Close the new tab
+        driver.close()
+        # Switch back to the original tab (first tab)
+        driver.switch_to.window(driver.window_handles[0])
         continue
-
-    
-
-# simulate the scraping of data
-time.sleep(10)
 
 
 # Click the next page button
