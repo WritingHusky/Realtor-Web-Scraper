@@ -4,7 +4,7 @@ import time
 import logging
 from selenium import webdriver
 from selenium.webdriver.common import by, keys
-from selenium.webdriver.support import expected_conditions as EC, ui
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 # Define constants
