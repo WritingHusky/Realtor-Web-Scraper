@@ -29,6 +29,7 @@ pip install selenium
 * Run the Scraper.py file to begin scraping
 * As the program begins you might have to do a verification test
 * Regualry during the test you will have to redo the verification
+* The window must stay open at all time during the whole process
 
 ## Authors
 
