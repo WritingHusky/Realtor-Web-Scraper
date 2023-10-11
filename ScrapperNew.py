@@ -1,3 +1,4 @@
+import csv
 import sys
 import time
 from selenium import webdriver
@@ -15,6 +16,7 @@ driver = webdriver.Chrome()  # or webdriver.Firefox() for Firefox
 # Navigate to the URL
 driver.get(url)
 wait = WebDriverWait(driver, 20)
+scraped_data = []
 
 # Give some time for the page to load and pass the "not a robot check"
 # If you fail opps 
@@ -79,11 +81,11 @@ for page in range(page_count):
         footage_Str: str
         
         try:
-            city_Str = driver.find_element(By.ID, "listingAddress").text.strip()
-            print("found city element")
+            city_Str = driver.find_element(By.XPATH, '//*[@id="listingAddress"]').text.strip()
+            print("found city element: " + repr(city_Str))
             #bedroom_Str = driver.find_element(By.ID, "BedroomIcon").find_element(By.CLASS_NAME, "listingIconNum ")
             bedroom_Str = driver.find_element(By.XPATH, '//*[@id="BedroomIcon"]//div[@class="listingIconNum"]').text.strip()
-            print("found bedroom element")
+            print("found bedroom element: ")
             #bathroom_Str = driver.find_element(By.ID, "BathroomIcon").find_element(By.CLASS_NAME, "listingIconNum").text.strip()
             bathroom_Str = driver.find_element(By.XPATH, '//*[@id="BathroomIcon"]//div[@class="listingIconNum"]').text.strip()
             print("found bathroom element")
@@ -94,10 +96,10 @@ for page in range(page_count):
             # Once the strings are made, format them into proper terms
             
             # Get the city of the listing 
-            city_index = city_Str.find('>')
-            city_Str = city_Str[city_index:]
-            city_index = city_Str.find(',')
-            city_Str = city_Str[:city_index]
+            city_index1 = city_Str.find("\n")+1
+            city_index2 = city_Str.find(',')
+            city_Str = city_Str[city_index1:city_index2]
+            print(city_Str)
             
             # Get the number of bedrooms
             if bedroom_Str.isdigit():
@@ -128,6 +130,7 @@ for page in range(page_count):
                 continue
             
             #TODO: Save the data collected
+            scraped_data.append([city_Str, price, bedroom_int, bathroom_int, footage_int])
             
             # now everything is done go back to the main page
             end()
@@ -150,6 +153,13 @@ for page in range(page_count):
     time.sleep(1)
     
     
+# Write the data to a CSV file
+with open('scraped_data.csv', 'w', newline='') as csvfile:
+    csv_writer = csv.writer(csvfile)
+    # Write the header row
+    csv_writer.writerow(["City", "Price", "Bedrooms", "Bathrooms", "Square Footage"])
+    # Write the data rows
+    csv_writer.writerows(scraped_data)
 
 # Close the Selenium WebDriver session
 driver.quit()
