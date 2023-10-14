@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 # Define constants
-URL = "https://www.realtor.ca/map#ZoomLevel=12&Center=50.678114%2C-120.334330&LatitudeMax=50.73530&LongitudeMax=-120.17280&LatitudeMin=50.62086&LongitudeMin=-120.49586&Sort=6-D&PropertyTypeGroupID=1&TransactionTypeId=2&PropertySearchTypeId=1&Currency=CAD"
+URL = "https://www.realtor.ca/map#ZoomLevel=11&Center=49.860567%2C-119.471053&LatitudeMax=49.97331&LongitudeMax=-119.14799&LatitudeMin=49.74756&LongitudeMin=-119.79412&Sort=6-D&PropertyTypeGroupID=1&TransactionTypeId=2&PropertySearchTypeId=1&Currency=CAD"
 WAIT_TIMEOUT = 30  # Adjust the timeout as needed
 LOG_FILE = "scraper.log" 
 DISCONNECTED_MSG = 'Unable to evaluate script: disconnected: not connected to DevTools\n'
@@ -32,22 +32,6 @@ running = True
 # Give some time for the page to load and pass the "I am not a robot check"
 # If you fail opps 
 time.sleep(WAIT_TIMEOUT)
-try:
-    # Find the total number of pages
-    page_count = driver.find_element(By.CLASS_NAME, "paginationTotalPagesNum").text.strip()
-
-except Exception as e:
-    logging.error(f"page count could not be found, The page might not have been loaded")
-    driver.quit()
-    sys.exit()
-
-# Make the page count an int
-if page_count.isdigit():
-    page_count = int(page_count)
-else:
-    logging.error(f"Page Count retival failed {page_count} is not an int.")
-    driver.quit()
-    sys.exit()
 
  # Function to handle the end of a loop
 def end():
@@ -149,13 +133,16 @@ def scrape_data():
         if driver.get_log('driver')[-1]['message'] == DISCONNECTED_MSG:
             running = False
             return
-        logging.error(f"listing failed: {e}")    
+        #logging.error(f"listing failed: {e}")    
         end()
         return
     # end of scrape_data function
-
+page_num = 0
 # Cycle through each page of listings
-for page in range(page_count):
+while driver.find_element(By.CLASS_NAME, "lnkNextResultsPage").get_attribute("disabled") != "disabled":
+    page_num += 1
+    if(page_num > 50):
+        break
     try:
         # let the page load
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, "listingDetailsLink")))
@@ -163,7 +150,7 @@ for page in range(page_count):
         listing_links = driver.find_elements(By.CLASS_NAME, "listingDetailsLink")
         
         if not listing_links:
-            logging.warning(f"No listing links found on this page: {page}")
+            logging.warning(f"No listing links found on this page: {page_num}")
             break
         
         # Cycle through each listing on the page
@@ -187,10 +174,10 @@ for page in range(page_count):
         button.click()
         time.sleep(1)
     except NoSuchWindowException as e:
-        logging.error(f"Window is not there: {e}")
+        #logging.error(f"Window is not there: {e}")
         break
     except Exception as e:
-        logging.error(f"An error occured: {e}")
+        logging.error(f"An error occured: {e} " + f"\n index: {i} range: {len(listing_links)}")
         end()
         break
         
