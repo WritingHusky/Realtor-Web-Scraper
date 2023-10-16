@@ -130,9 +130,9 @@ def scrape_data():
 
     # If the scraping fails go on to the next listing
     except Exception as e:
-        if driver.get_log('driver')[-1]['message'] == DISCONNECTED_MSG:
-            running = False
-            return
+        #if driver.get_log('driver')[-1]['message'] == DISCONNECTED_MSG:
+        #    running = False
+        #    return
         #logging.error(f"listing failed: {e}")    
         end()
         return
@@ -157,7 +157,7 @@ while driver.find_element(By.CLASS_NAME, "lnkNextResultsPage").get_attribute("di
         for i in range(len(listing_links)):
 
             # Find ith lisitng in the list
-            listing_links = driver.find_elements(By.CLASS_NAME, "listingDetailsLink")
+            #listing_links = driver.find_elements(By.CLASS_NAME, "listingDetailsLink")
             link = listing_links[i]
             
             scrape_data() 
